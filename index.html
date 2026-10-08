@@ -956,12 +956,14 @@
       // User zoom (1 = default overview, smaller = closer) and pan offset on the orbit plane
       const view = { zoom: 1, pan: new THREE.Vector3() };
       const ZOOM_MIN = 0.3;
-      const ZOOM_MAX = 1.15;
+      const ZOOM_MAX = 1.6; // can still zoom out past the old default view
       const isZoomedIn = () => view.zoom < 0.95;
 
       function overviewPose(time) {
         const a = camera.aspect;
-        const ZOOM = 1.75; // higher = farther out
+        // default framing, higher = farther out; portrait phones stay wider so the
+        // outer planets don't orbit off the sides of the screen
+        const ZOOM = a < 1 ? 1.75 : 1.25;
         // narrow screens back the camera off so the outer orbit still fits across
         const k = Math.max(1, 1.25 / a) * ZOOM;
         // no sway or mouse parallax while exploring zoomed in, so dragging feels solid
