@@ -2,13 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chris McLoughlin Portfolio</title>
+    <title>Chris McLoughlin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@300;400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Hanken+Grotesk:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
@@ -16,602 +15,1410 @@
       src="https://kit.fontawesome.com/36e6e981b3.js"
       crossorigin="anonymous"
     ></script>
+    <script type="importmap">
+      { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+    </script>
   </head>
-  <body>
-    <!-- NAV -->
-    <header class="nav">
-      <div class="container nav-inner">
-        <a href="#home" class="brand">Chris McLoughlin</a>
-        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
-          <i class="fa-solid fa-bars"></i>
-        </button>
-        <ul class="nav-links">
-          <li><a href="#about">About</a></li>
-          <li><a href="#experience">Experience</a></li>
-          <li><a href="#portfolio">Projects</a></li>
-          <li><a href="#involvement">Involvement</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
+  <body class="loading">
+    <!-- Rocket launch loading screen -->
+    <div id="loader" role="status" aria-live="polite">
+      <div class="launch">
+        <svg class="rocket" viewBox="0 0 100 210" aria-hidden="true">
+          <g class="flame">
+            <path d="M36 142 Q50 215 64 142 Z" fill="#ff8a3d" />
+            <path d="M40 142 Q50 195 60 142 Z" fill="#ffd66b" />
+            <path d="M45 142 Q50 172 55 142 Z" fill="#fff6d6" />
+          </g>
+          <path d="M22 100 L4 142 L4 160 L25 136 Z" fill="#ff8a6b" />
+          <path d="M78 100 L96 142 L96 160 L75 136 Z" fill="#ff8a6b" />
+          <rect x="34" y="128" width="32" height="16" rx="4" fill="#9aa4b8" />
+          <path d="M50 4 C76 30 80 72 78 132 L22 132 C20 72 24 30 50 4 Z" fill="#f3f5fa" />
+          <path d="M50 4 C62 16 70 30 74 46 L26 46 C30 30 38 16 50 4 Z" fill="#ff8a6b" />
+          <path d="M50 4 C50 40 49 90 47 132 L22 132 C20 72 24 30 50 4 Z" fill="#000" opacity="0.06" />
+          <circle cx="50" cy="76" r="13" fill="#6ec8ff" stroke="#c9d3e3" stroke-width="5" />
+          <circle cx="45" cy="71" r="4" fill="#fff" opacity="0.7" />
+          <path d="M44 132 L44 100 L56 100 L56 132 Z" fill="#ff8a6b" opacity="0.85" />
+        </svg>
+        <div class="smoke" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="pad" aria-hidden="true"></div>
       </div>
+      <div class="progress" role="progressbar" aria-label="Loading" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <p class="status"><span id="status">Fueling up</span><span id="percent">0%</span></p>
+    </div>
+
+    <canvas id="scene" aria-hidden="true"></canvas>
+    <div id="shooting" aria-hidden="true"></div>
+
+    <!-- Floating planet name labels (positioned by the scene script) -->
+    <div id="labels"></div>
+
+    <!-- Top-left title -->
+    <header class="title-card">
+      <h1>Chris McLoughlin</h1>
+      <p>Computer Science · Purdue University</p>
     </header>
 
-    <main>
-      <!-- HERO -->
-      <section id="home" class="hero">
-        <canvas id="sky" aria-hidden="true"></canvas>
-        <div class="container hero-inner">
-          <div class="hero-text reveal">
-            <p class="eyebrow">Computer Science · Purdue University</p>
-            <h1 class="hero-title">
-              Hi, I'm <em>Chris</em>.<br />I connect the dots.
-            </h1>
-            <p class="hero-sub">
-              Computer Science student at Purdue with a minor in Communications.
-              I build cloud cost tooling, data pipelines, and full-stack AI apps,
-              most recently as a Software Development Intern at Interactive
-              Brokers.
-            </p>
-            <div class="hero-actions">
-              <a href="#portfolio" class="btn btn-solid">View Projects</a>
-              <a
-                href="images/Chris McLoughlin Resume 11_6.pdf"
-                download
-                class="btn btn-ghost"
-                >Download Resume</a
-              >
-            </div>
-          </div>
+    <!-- Top-right quick links -->
+    <nav class="quick-links" aria-label="Contact links">
+      <a href="https://www.linkedin.com/in/chrismclou/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
+        <i class="fa-brands fa-linkedin-in"></i>
+      </a>
+      <a href="mailto:cmcloug@purdue.edu" aria-label="Email cmcloug@purdue.edu" title="cmcloug@purdue.edu">
+        <i class="fa-solid fa-envelope"></i>
+      </a>
+      <a href="https://github.com/cmcloug" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
+        <i class="fa-brands fa-github"></i>
+      </a>
+      <a href="images/cm_resume_10_8.pdf" download class="resume-link">
+        <i class="fa-solid fa-file-arrow-down"></i><span>Resume</span>
+      </a>
+    </nav>
+
+    <p class="copyright">&copy; <span id="year">2026</span> Chris McLoughlin</p>
+
+    <p class="hint" id="hint">Select a planet to explore</p>
+
+    <!-- Zoom controls (scroll / pinch also zoom; drag to pan once zoomed in) -->
+    <div class="zoom-controls" aria-label="Zoom">
+      <button data-zoom="in" aria-label="Zoom in"><i class="fa-solid fa-plus"></i></button>
+      <button data-zoom="out" aria-label="Zoom out"><i class="fa-solid fa-minus"></i></button>
+      <button data-zoom="reset" aria-label="Reset view"><i class="fa-solid fa-expand"></i></button>
+    </div>
+
+    <!-- Planet dock (also the keyboard / accessible way to navigate) -->
+    <nav class="dock" aria-label="Planets">
+      <button data-id="about" style="--c: #ffd66b"><span></span>About</button>
+      <button data-id="education" style="--c: #cfb991"><span></span>Education</button>
+      <button data-id="internships" style="--c: #ffb35c"><span></span>Internships</button>
+      <button data-id="projects" style="--c: #79e06f"><span></span>Projects</button>
+      <button data-id="clubs" style="--c: #ff9fd2"><span></span>Clubs</button>
+      <button data-id="work" style="--c: #4fd1c5"><span></span>Work Experience</button>
+      <button data-id="contact" style="--c: #ff8a6b"><span></span>Contact</button>
+    </nav>
+
+    <!-- Info panel -->
+    <aside id="panel" role="dialog" aria-labelledby="panel-title" aria-hidden="true">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow" id="panel-eyebrow"></p>
+          <h2 id="panel-title"></h2>
         </div>
-      </section>
+        <button class="close" aria-label="Back to galaxy">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
 
-      <!-- ABOUT -->
-      <section id="about" class="section">
-        <div class="container">
-          <div class="section-head reveal">
-            <p class="eyebrow">Get to know me</p>
-            <h2 class="section-title">About</h2>
-          </div>
-          <div class="info-grid">
-            <article class="card reveal">
-              <div class="card-head">
-                <span class="card-icon"><i class="fa-solid fa-user"></i></span>
-                <h3>About Me</h3>
-              </div>
-              <p>
-                I am passionate about technology and have enjoyed learning about
-                computers for many years. I also spend my free time playing
-                volleyball and golf as well as participating in community work!
-              </p>
-            </article>
+      <div class="panel-body">
+        <!-- ABOUT -->
+        <section class="pc" id="pc-about" data-title="About Me" data-eyebrow="The Star">
+          <ul class="facts">
+            <li>Purdue CS</li>
+            <li>Class of 2028</li>
+            <li>Minor in Communications</li>
+          </ul>
 
-            <article class="card reveal">
-              <div class="card-head">
-                <span class="card-icon"><i class="fa-solid fa-graduation-cap"></i></span>
-                <h3>Education</h3>
-              </div>
-              <p class="degree">B.S. in Computer Science</p>
-              <p class="muted">Minor in Communications</p>
-              <p class="muted">Purdue University, College of Science</p>
-              <p class="muted small spaced">
-                Anticipated Graduation: May 2028<br />
-                Software Engineering &amp; Machine Intelligence<br />
-                West Lafayette, IN
-              </p>
-            </article>
+          <p class="lead">
+            I'm a Computer Science student at Purdue University focused on
+            software engineering and machine intelligence.
+          </p>
+          <p>
+            Outside of class, you'll find me leading the CS Undergraduate
+            Student Board, competing in sports, or planning my next trip.
+          </p>
 
-            <article class="card reveal">
-              <div class="card-head">
-                <span class="card-icon"><i class="fa-solid fa-book-open"></i></span>
-                <h3>Coursework</h3>
-              </div>
-              <ul class="chips">
-                <li>Programming in C</li>
-                <li>Object Oriented Programming</li>
-                <li>Data Analytics</li>
-                <li>Calculus 1–3</li>
-                <li>Linear Algebra</li>
-                <li>Computer Architecture</li>
-                <li>Foundations of CS</li>
-                <li>Data Structures &amp; Algorithms</li>
-              </ul>
-            </article>
-          </div>
-
-          <div class="card skills reveal">
-            <div class="skill-group">
-              <h4>Languages</h4>
-              <ul class="chips">
-                <li>Python</li>
-                <li>SQL</li>
-                <li>R</li>
-                <li>C</li>
-                <li>JavaScript</li>
-              </ul>
-            </div>
-            <div class="skill-group">
-              <h4>Frameworks</h4>
-              <ul class="chips">
-                <li>React</li>
-                <li>Tailwind CSS</li>
-                <li>FastAPI</li>
-                <li>SQLAlchemy</li>
-              </ul>
-            </div>
-            <div class="skill-group">
-              <h4>Data &amp; Cloud</h4>
-              <ul class="chips">
-                <li>AWS Athena</li>
-                <li>AWS FinOps</li>
-                <li>PostgreSQL</li>
-                <li>Redis</li>
-                <li>Excel Reporting</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- EXPERIENCE -->
-      <section id="experience" class="section">
-        <div class="container">
-          <div class="section-head reveal">
-            <p class="eyebrow">Where I've worked</p>
-            <h2 class="section-title">Experience</h2>
-          </div>
-
-          <ol class="timeline">
-            <li class="timeline-item reveal">
-              <div class="card">
-                <div class="role-head">
-                  <div>
-                    <h3>Interactive Brokers LLC</h3>
-                    <p class="role">Software Development Intern, Enterprise Architecture</p>
-                  </div>
-                  <div class="role-meta">
-                    <span>June 2026 – August 2026</span>
-                    <span>Greenwich, CT</span>
-                  </div>
+          <!-- Interests: artist photos come from Spotify (via its oEmbed API); athletics and
+               travel photos load from images/interests/ and show a placeholder until added -->
+          <div class="block">
+            <h3>Interests</h3>
+            <div class="interests">
+              <article class="interest">
+                <h4><i class="fa-brands fa-spotify"></i> Music</h4>
+                <p>A few artists in heavy rotation on my Spotify.</p>
+                <div class="tile-grid">
+              <a class="tile" href="https://open.spotify.com/artist/7eKkW1zo5uzW8kUntiiBvz" target="_blank" rel="noopener">
+                <span class="tile-empty"><i class="fa-solid fa-music"></i></span>
+                <img src="https://image-cdn-fa.spotifycdn.com/image/ab676161000051749f6f7c2d12975d2a4b3a0fd8" loading="lazy" alt="Malcolm Todd" onerror="this.remove()" />
+                <span class="tile-caption">Malcolm Todd</span>
+              </a>
+              <a class="tile" href="https://open.spotify.com/artist/1oPRcJUkloHaRLYx0olBLJ" target="_blank" rel="noopener">
+                <span class="tile-empty"><i class="fa-solid fa-music"></i></span>
+                <img src="https://image-cdn-fa.spotifycdn.com/image/ab676161000051748257ff04aaf62d848030efeb" loading="lazy" alt="Magdalena Bay" onerror="this.remove()" />
+                <span class="tile-caption">Magdalena Bay</span>
+              </a>
+              <a class="tile" href="https://open.spotify.com/artist/3tlXnStJ1fFhdScmQeLpuG" target="_blank" rel="noopener">
+                <span class="tile-empty"><i class="fa-solid fa-music"></i></span>
+                <img src="https://image-cdn-fa.spotifycdn.com/image/ab67616100005174582fbf712f5b6a9bf65d9b84" loading="lazy" alt="Brent Faiyaz" onerror="this.remove()" />
+                <span class="tile-caption">Brent Faiyaz</span>
+              </a>
+              <a class="tile" href="https://open.spotify.com/artist/57vWImR43h4CaDao012Ofp" target="_blank" rel="noopener">
+                <span class="tile-empty"><i class="fa-solid fa-music"></i></span>
+                <img src="https://image-cdn-fa.spotifycdn.com/image/ab676161000051747e3150cffbfda40c6eaf28dd" loading="lazy" alt="Steve Lacy" onerror="this.remove()" />
+                <span class="tile-caption">Steve Lacy</span>
+              </a>
                 </div>
-                <ul class="bullets">
-                  <li>
-                    Built an internal AWS FinOps tool in Python, querying cost and
-                    usage data with AWS Athena and SQL across all organizational
-                    accounts and generating formatted Excel reports for any
-                    user-selected date range. This cut reporting time from 4–6
-                    hours to 4 minutes and eliminated manual errors.
-                  </li>
-                  <li>
-                    Engineered a reusable AWS savings analysis tool in Python,
-                    using Athena and SQL to compare usage and cost trends across
-                    thousands of instances and numerous accounts against Reserved
-                    Instance and Savings Plan opportunities, identifying
-                    significant reductions in monthly on-demand spend.
-                  </li>
-                  <li>
-                    Led a team in automating cleanup of unused AWS sandbox
-                    resources with Python, owning project timelines, meetings,
-                    task tracking, and stakeholder communication across multiple
-                    teams.
-                  </li>
-                  <li>
-                    Supported IBKR's procurement process by conducting vendor
-                    outreach, coordinating product demos, and building comparison
-                    sheets that informed internal platform selection.
-                  </li>
-                </ul>
-                <ul class="chips">
-                  <li>Python</li><li>AWS Athena</li><li>SQL</li><li>Excel</li><li>FinOps</li>
-                </ul>
-              </div>
-            </li>
+              </article>
 
-            <li class="timeline-item reveal">
-              <div class="card">
-                <div class="role-head">
-                  <div>
-                    <h3>Purdue University &amp; Feenix Group</h3>
-                    <p class="role">Undergraduate Data Science Researcher · The Data Mine</p>
-                  </div>
-                  <div class="role-meta">
-                    <span>August 2025 – May 2026</span>
-                    <span>Lafayette, IN</span>
-                  </div>
+              <article class="interest">
+                <h4><i class="fa-solid fa-volleyball"></i> Athletics</h4>
+                <p>Athletics keep me competitive when I'm away from the keyboard.</p>
+                <div class="tile-grid">
+              <figure class="tile">
+                <span class="tile-empty"><i class="fa-solid fa-volleyball"></i></span>
+                <img src="images/interests/athletics-1.jpg" alt="Athletics photo 1" onerror="this.remove()" />
+              </figure>
+              <figure class="tile">
+                <span class="tile-empty"><i class="fa-solid fa-volleyball"></i></span>
+                <img src="images/interests/athletics-2.jpg" alt="Athletics photo 2" onerror="this.remove()" />
+              </figure>
+              <figure class="tile">
+                <span class="tile-empty"><i class="fa-solid fa-volleyball"></i></span>
+                <img src="images/interests/athletics-3.jpg" alt="Athletics photo 3" onerror="this.remove()" />
+              </figure>
+              <figure class="tile">
+                <span class="tile-empty"><i class="fa-solid fa-volleyball"></i></span>
+                <img src="images/interests/athletics-4.jpg" alt="Athletics photo 4" onerror="this.remove()" />
+              </figure>
                 </div>
-                <ul class="bullets">
-                  <li>
-                    Partnered with Feenix Group and a team of 8 developers to
-                    design and deploy a real-time analytics dashboard tracking
-                    engagement and monetization metrics across Roblox games.
-                  </li>
-                  <li>
-                    Developed the React frontend and engineered a relational
-                    database and scheduling system that automates periodic data
-                    collection from public APIs, enabling continuous time-series
-                    tracking with no manual intervention.
-                  </li>
-                  <li>
-                    Implemented a timestamp retrieval function to pull historical
-                    snapshots for on-demand analytics and period-over-period
-                    comparisons.
-                  </li>
-                  <li>
-                    Used SQL and R for data aggregation and visualization,
-                    uncovering player retention and performance patterns that
-                    informed product strategy.
-                  </li>
-                  <li>
-                    Improved scraping efficiency by 44% by optimizing data
-                    requests and query scheduling.
-                  </li>
-                </ul>
-                <ul class="chips">
-                  <li>React</li><li>SQL</li><li>R</li><li>APIs</li><li>Data Visualization</li>
-                </ul>
-              </div>
-            </li>
-          </ol>
-        </div>
-      </section>
+              </article>
 
-      <!-- PORTFOLIO -->
-      <section id="portfolio" class="section">
-        <div class="container">
-          <div class="section-head reveal">
-            <p class="eyebrow">Selected work</p>
-            <h2 class="section-title">Projects</h2>
+              <article class="interest">
+                <h4><i class="fa-solid fa-plane"></i> Travel</h4>
+                <p>Places I've explored and the ones that stuck with me.</p>
+                <div class="tile-grid">
+              <figure class="tile">
+                <span class="tile-empty"><i class="fa-solid fa-earth-americas"></i></span>
+                <img src="images/interests/travel-1.jpg" alt="Travel photo 1" onerror="this.remove()" />
+              </figure>
+              <figure class="tile">
+                <span class="tile-empty"><i class="fa-solid fa-earth-americas"></i></span>
+                <img src="images/interests/travel-2.jpg" alt="Travel photo 2" onerror="this.remove()" />
+              </figure>
+              <figure class="tile">
+                <span class="tile-empty"><i class="fa-solid fa-earth-americas"></i></span>
+                <img src="images/interests/travel-3.jpg" alt="Travel photo 3" onerror="this.remove()" />
+              </figure>
+              <figure class="tile">
+                <span class="tile-empty"><i class="fa-solid fa-earth-americas"></i></span>
+                <img src="images/interests/travel-4.jpg" alt="Travel photo 4" onerror="this.remove()" />
+              </figure>
+                </div>
+              </article>
+            </div>
           </div>
 
-          <!-- TODO: replace "#" with GitHub links -->
-          <div class="work-list">
-            <a class="work reveal" href="#" target="_blank" rel="noopener">
+          <div class="actions">
+            <a href="images/cm_resume_10_8.pdf" download class="btn">Download Resume</a>
+            <button class="btn btn-ghost" data-goto="contact">Get in touch</button>
+          </div>
+        </section>
+
+        <!-- EDUCATION -->
+        <section class="pc" id="pc-education" data-title="Education" data-eyebrow="Planet I">
+          <article class="item">
+            <div class="item-head">
+              <h3>Purdue University</h3>
+              <span class="meta">Anticipated May 2028 · West Lafayette, IN</span>
+            </div>
+            <p class="role">College of Science</p>
+            <ul class="bullets">
+              <li>Bachelor of Science in Computer Science</li>
+              <li>Minor in Communications</li>
+              <li>Track: Software Engineering &amp; Machine Intelligence</li>
+            </ul>
+          </article>
+
+          <div class="block">
+            <h3>Relevant Coursework</h3>
+            <ul class="chips">
+              <li>Programming in C</li>
+              <li>Object Oriented Programming</li>
+              <li>Data Analytics</li>
+              <li>Calculus 1–3</li>
+              <li>Linear Algebra</li>
+              <li>Computer Architecture</li>
+              <li>Foundations of CS</li>
+              <li>Data Structures &amp; Algorithms</li>
+              <li>Systems Programming</li>
+              <li>Software Engineering</li>
+              <li>Operating Systems</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- INTERNSHIPS -->
+        <section class="pc" id="pc-internships" data-title="Internships &amp; Research" data-eyebrow="Planet II">
+          <article class="item">
+            <div class="item-head">
+              <h3>Interactive Brokers LLC</h3>
+              <span class="meta">Jun 2026 – Aug 2026 · Greenwich, CT</span>
+            </div>
+            <p class="role">Software Development Intern, Enterprise Architecture</p>
+            <ul class="bullets">
+              <li>
+                Built an internal AWS FinOps tool in Python, querying cost and
+                usage data with AWS Athena and SQL across all organizational
+                accounts and generating formatted Excel reports for any
+                user-selected date range. This cut reporting time from 4–6 hours
+                to 4 minutes and eliminated manual errors.
+              </li>
+              <li>
+                Engineered a reusable AWS savings analysis tool in Python, using
+                Athena and SQL to compare usage and cost trends across thousands
+                of instances and numerous accounts against Reserved Instance and
+                Savings Plan opportunities, identifying significant reductions in
+                monthly on-demand spend.
+              </li>
+              <li>
+                Led a team in automating cleanup of unused AWS sandbox resources
+                with Python, owning project timelines, meetings, task tracking,
+                and stakeholder communication across multiple teams.
+              </li>
+              <li>
+                Supported IBKR's procurement process by conducting vendor
+                outreach, coordinating product demos, and building comparison
+                sheets that informed internal platform selection.
+              </li>
+            </ul>
+          </article>
+
+          <article class="item">
+            <div class="item-head">
+              <h3>Purdue University &amp; Feenix Group</h3>
+              <span class="meta">Aug 2025 – May 2026 · Lafayette, IN</span>
+            </div>
+            <p class="role">Undergraduate Data Science Researcher · The Data Mine</p>
+            <ul class="bullets">
+              <li>
+                Partnered with Feenix Group and a team of 8 developers to design
+                and deploy a real-time analytics dashboard tracking engagement and
+                monetization metrics across Roblox games.
+              </li>
+              <li>
+                Engineered a relational database and scheduling system that
+                automates periodic data collection from public APIs, enabling
+                continuous time-series tracking with no manual intervention.
+              </li>
+              <li>
+                Implemented a timestamp retrieval function to pull historical
+                snapshots for on-demand analytics and period-over-period
+                comparisons.
+              </li>
+              <li>
+                Used SQL and R for data aggregation and visualization, uncovering
+                player retention and performance patterns that informed product
+                strategy.
+              </li>
+              <li>
+                Improved scraping efficiency by 44% by optimizing data requests
+                and query scheduling.
+              </li>
+            </ul>
+          </article>
+        </section>
+
+        <!-- PROJECTS -->
+        <section class="pc" id="pc-projects" data-title="Projects" data-eyebrow="Planet III">
+          <a class="work" href="https://github.com/team-project-cs307/intervue.you" target="_blank" rel="noopener">
+            <div class="work-img"><img src="images/intervue-card.jpg" alt="intervue.you technical interview screen" /></div>
+            <div class="work-body">
               <h3>intervue.you</h3>
-              <p>AI mock interview platform with a real-time voice interviewer, graded coding challenges, and progress tracking.</p>
+              <p>AI mock interview platform with a real-time voice interviewer, graded coding challenges, and progress tracking. 500+ user accounts.</p>
               <span class="work-link">View on GitHub <i class="fa-solid fa-arrow-right"></i></span>
-            </a>
-            <a class="work reveal" href="https://github.com/cmcloug/grocery-store-navigator-fullstack.git" target="_blank" rel="noopener">
+            </div>
+          </a>
+          <a class="work" href="https://github.com/cmcloug/grocery-store-navigator-fullstack.git" target="_blank" rel="noopener">
+            <div class="work-img"><img src="images/work1.jpg" alt="Optimal Shopping screenshot" /></div>
+            <div class="work-body">
               <h3>Optimal Shopping</h3>
               <p>Import a grocery list and find the quickest path through your nearest store.</p>
               <span class="work-link">View on GitHub <i class="fa-solid fa-arrow-right"></i></span>
-            </a>
-            <a class="work reveal" href="https://github.com/cmcloug/story-to-multimedia-backend.git" target="_blank" rel="noopener">
+            </div>
+          </a>
+          <a class="work" href="https://github.com/cmcloug/story-to-multimedia-backend.git" target="_blank" rel="noopener">
+            <div class="work-img"><img src="images/work2.png" alt="Story to Multimedia screenshot" /></div>
+            <div class="work-body">
               <h3>Story to Multimedia</h3>
               <p>Turn a scraped or uploaded story into an audiobook with a background video of your choice.</p>
               <span class="work-link">View on GitHub <i class="fa-solid fa-arrow-right"></i></span>
-            </a>
-            <a class="work reveal" href="#" target="_blank" rel="noopener">
-              <h3>EV Population vs. AQI</h3>
-              <p>Analysis comparing city Air Quality Index data with local electric vehicle population.</p>
-              <span class="work-link">View on GitHub <i class="fa-solid fa-arrow-right"></i></span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- INVOLVEMENT -->
-      <section id="involvement" class="section">
-        <div class="container">
-          <div class="section-head reveal">
-            <p class="eyebrow">Beyond the classroom</p>
-            <h2 class="section-title">Leadership &amp; Involvement</h2>
-            <p class="lead center">
-              Outside the classroom, I stay actively involved in organizations
-              and activities that reflect my passions for technology,
-              leadership, and teamwork, from the volleyball world to technology
-              and community work based organizations.
-            </p>
-          </div>
-
-          <div class="carousel reveal">
-            <button class="carousel-btn prev" aria-label="Previous">
-              <i class="fa-solid fa-chevron-left"></i>
-            </button>
-            <div class="carousel-track">
-              <article class="card involve">
-                <span class="card-icon"><i class="fa-solid fa-users"></i></span>
-                <h3>Purdue CS Undergraduate Student Board</h3>
-                <p class="role">President · previously Secretary</p>
-                <p>
-                  Manage a 25-member board and oversee 13 concurrent initiatives,
-                  including mentorship, tutoring, and technical workshops, that
-                  draw hundreds of student participants each year. I maintain a
-                  close working relationship with faculty and the department. As
-                  Secretary, I led the freshman mentorship program, overseeing
-                  recruitment, interviews, and coordination of mentors and
-                  mentees.
-                </p>
-              </article>
-              <article class="card involve">
-                <span class="card-icon"><i class="fa-solid fa-building-columns"></i></span>
-                <h3>Purdue CS Ambassadors</h3>
-                <p class="role">Ambassador · Department of Computer Science</p>
-                <p>
-                  Serve as a student representative for the department, helping
-                  prospective students, sharing firsthand experiences about the CS
-                  program, participating in prospective student panels, and
-                  connecting peers with department resources alongside the
-                  CS/DS/AI Welcome Center.
-                </p>
-              </article>
-              <article class="card involve">
-                <span class="card-icon"><i class="fa-solid fa-basketball"></i></span>
-                <h3>Purdue Recreation &amp; Wellness</h3>
-                <p class="role">Intramural Sports Supervisor</p>
-                <p>
-                  Oversee nightly intramural games, tournaments, and special
-                  events across campus facilities. I train, evaluate, and
-                  coordinate peer officials and scorekeepers, act as a first
-                  responder to injuries while enforcing RecWell policies, and serve
-                  as the liaison between players, officials, and professional
-                  staff on rules, schedules, and IMLeagues.
-                </p>
-              </article>
-              <article class="card involve">
-                <span class="card-icon"><i class="fa-solid fa-flask"></i></span>
-                <h3>Eli Lilly Summer Science Camp</h3>
-                <p class="role">Site Supervisor</p>
-                <p>
-                  Managed 42 counselors and 250+ campers, ensuring safety and
-                  smooth daily operations, and served as the main communication
-                  link between parents and counselors.
-                </p>
-              </article>
-              <article class="card involve">
-                <span class="card-icon"><i class="fa-solid fa-volleyball"></i></span>
-                <h3>Purdue Volleyball</h3>
-                <p class="role">Practice Player</p>
-                <p>
-                  Support the team through drills, scrimmages, and
-                  position-specific training to help starters prepare for
-                  competition, simulating opposing team strategies and keeping
-                  practice intensity high throughout the season.
-                </p>
-              </article>
             </div>
-            <button class="carousel-btn next" aria-label="Next">
-              <i class="fa-solid fa-chevron-right"></i>
-            </button>
-          </div>
-        </div>
-      </section>
+          </a>
+        </section>
 
-      <!-- CONTACT -->
-      <section id="contact" class="section">
-        <div class="container contact-grid">
-          <div class="contact-left reveal">
-            <p class="eyebrow">Say hello</p>
-            <h2 class="section-title">Contact Me</h2>
-            <ul class="contact-list">
-              <li>
-                <span class="contact-icon"><i class="fa-solid fa-envelope"></i></span>
-                <a href="mailto:cmcloug@purdue.edu">cmcloug@purdue.edu</a>
-              </li>
-              <li>
-                <span class="contact-icon"><i class="fa-brands fa-github"></i></span>
-                <a href="https://github.com/cmcloug" target="_blank" rel="noopener">github.com/cmcloug</a>
-              </li>
-              <li>
-                <span class="contact-icon"><i class="fa-brands fa-linkedin"></i></span>
-                <a href="https://www.linkedin.com/in/chrismclou/" target="_blank" rel="noopener">linkedin.com/in/chrismclou</a>
-              </li>
-            </ul>
-            <a
-              href="images/Chris McLoughlin Resume 11_6.pdf"
-              download
-              class="btn btn-solid"
-              >Download Resume</a
-            >
-          </div>
-          <div class="contact-right reveal">
-            <form name="submit-to-google-sheet" class="card">
-              <input type="text" name="Name" placeholder="Your Name" required />
-              <input type="email" name="email" placeholder="Your Email" required />
-              <textarea name="message" rows="6" placeholder="Your Message"></textarea>
-              <button type="submit" class="btn btn-solid">Send Message</button>
-              <span id="msg" role="status"></span>
-            </form>
-          </div>
-        </div>
-      </section>
-    </main>
+        <!-- CLUBS -->
+        <section class="pc" id="pc-clubs" data-title="Clubs &amp; Leadership" data-eyebrow="Planet IV">
+          <article class="item">
+            <h3>Purdue CS Undergraduate Student Board</h3>
+            <p class="role">President · previously Secretary</p>
+            <p>
+              Manage a 25-member board and oversee 13 concurrent initiatives,
+              including mentorship, tutoring, and technical workshops, that draw
+              hundreds of student participants each year. I maintain a close
+              working relationship with faculty and the department. As
+              Secretary, I led the freshman mentorship program, overseeing
+              recruitment, interviews, and coordination of mentors and mentees.
+            </p>
+          </article>
+          <article class="item">
+            <h3>Purdue Volleyball</h3>
+            <p class="role">Practice Player</p>
+            <p>
+              Support the team through drills, scrimmages, and position-specific
+              training to help starters prepare for competition, simulating
+              opposing team strategies and keeping practice intensity high
+              throughout the season.
+            </p>
+          </article>
+        </section>
 
-    <footer class="footer">
-      <p>&copy; chrismclou · Made by Chris McLoughlin</p>
-    </footer>
+        <!-- WORK EXPERIENCE -->
+        <section class="pc" id="pc-work" data-title="Work Experience" data-eyebrow="Planet V">
+          <article class="item">
+            <h3>Purdue Recreation &amp; Wellness</h3>
+            <p class="role">Intramural Sports Supervisor</p>
+            <p>
+              Oversee nightly intramural games, tournaments, and special events
+              across campus facilities. I train, evaluate, and coordinate peer
+              officials and scorekeepers, act as a first responder to injuries
+              while enforcing RecWell policies, and serve as the liaison between
+              players, officials, and professional staff on rules, schedules,
+              and IMLeagues.
+            </p>
+          </article>
+          <article class="item">
+            <h3>Purdue CS Ambassadors</h3>
+            <p class="role">Ambassador · Department of Computer Science</p>
+            <p>
+              Serve as a student representative for the department, helping
+              prospective students, sharing firsthand experiences about the CS
+              program, participating in prospective student panels, and
+              connecting peers with department resources alongside the CS/DS/AI
+              Welcome Center.
+            </p>
+          </article>
+          <article class="item">
+            <h3>Eli Lilly Summer Science Camp</h3>
+            <p class="role">Site Supervisor</p>
+            <p>
+              Managed 42 counselors and 250+ campers, ensuring safety and smooth
+              daily operations, and served as the main communication link
+              between parents and counselors.
+            </p>
+          </article>
+        </section>
 
-    <!-- Constellation background -->
+        <!-- CONTACT -->
+        <section class="pc" id="pc-contact" data-title="Contact" data-eyebrow="Planet VI">
+          <ul class="contact-list">
+            <li>
+              <span class="contact-icon"><i class="fa-solid fa-envelope"></i></span>
+              <a href="mailto:cmcloug@purdue.edu">cmcloug@purdue.edu</a>
+            </li>
+            <li>
+              <span class="contact-icon"><i class="fa-brands fa-github"></i></span>
+              <a href="https://github.com/cmcloug" target="_blank" rel="noopener">github.com/cmcloug</a>
+            </li>
+            <li>
+              <span class="contact-icon"><i class="fa-brands fa-linkedin"></i></span>
+              <a href="https://www.linkedin.com/in/chrismclou/" target="_blank" rel="noopener">linkedin.com/in/chrismclou</a>
+            </li>
+          </ul>
+          <form name="submit-to-google-sheet">
+            <input type="text" name="Name" placeholder="Your Name" required />
+            <input type="email" name="email" placeholder="Your Email" required />
+            <textarea name="message" rows="5" placeholder="Your Message"></textarea>
+            <button type="submit" class="btn">Send Message</button>
+            <span id="msg" role="status"></span>
+          </form>
+          <a href="images/cm_resume_10_8.pdf" download class="btn btn-ghost">Download Resume</a>
+        </section>
+      </div>
+    </aside>
+
+    <!-- ===== Solar system scene ===== -->
+    <script type="module">
+      import * as THREE from "three";
+      dispatchEvent(new CustomEvent("load-step", { detail: "library" })); // 3D library downloaded
+
+      const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const UP = new THREE.Vector3(0, 1, 0);
+
+      // ---------- Renderer, scene, camera ----------
+      const canvas = document.getElementById("scene");
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.setSize(innerWidth, innerHeight);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x03050b);
+
+      const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 3000);
+      camera.position.set(0, 140, 260); // starts far out, flies in on load
+
+      scene.add(new THREE.AmbientLight(0x6677aa, 0.9));
+      scene.add(new THREE.HemisphereLight(0x99bbff, 0x221a33, 0.6));
+      scene.add(new THREE.PointLight(0xfff1d6, 2.4, 0, 0)); // the sun
+
+      // ---------- Shared helpers ----------
+      // 3-step toon shading for a cartoony, cel-shaded look
+      const gradientMap = new THREE.DataTexture(new Uint8Array([80, 160, 255]), 3, 1, THREE.RedFormat);
+      gradientMap.minFilter = gradientMap.magFilter = THREE.NearestFilter;
+      gradientMap.needsUpdate = true;
+      const toon = (color, extra = {}) =>
+        new THREE.MeshToonMaterial({ color, gradientMap, ...extra });
+
+      function seeded(seed) {
+        return () => {
+          seed = (seed * 16807) % 2147483647;
+          return (seed - 1) / 2147483646;
+        };
+      }
+
+      function canvasTexture(w, h, paint) {
+        const c = document.createElement("canvas");
+        c.width = w;
+        c.height = h;
+        paint(c.getContext("2d"), w, h);
+        const t = new THREE.CanvasTexture(c);
+        t.colorSpace = THREE.SRGBColorSpace;
+        return t;
+      }
+
+      const GLOW = canvasTexture(128, 128, (g) => {
+        const grd = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+        grd.addColorStop(0, "rgba(255,255,255,1)");
+        grd.addColorStop(0.2, "rgba(255,255,255,0.6)");
+        grd.addColorStop(1, "rgba(255,255,255,0)");
+        g.fillStyle = grd;
+        g.fillRect(0, 0, 128, 128);
+      });
+
+      function glow(color, scale, opacity = 0.5) {
+        const s = new THREE.Sprite(
+          new THREE.SpriteMaterial({
+            map: GLOW,
+            color,
+            transparent: true,
+            opacity,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+          })
+        );
+        s.scale.setScalar(scale);
+        return s;
+      }
+
+      function placeOnSurface(obj, radius, normal) {
+        obj.position.copy(normal).multiplyScalar(radius);
+        obj.quaternion.setFromUnitVectors(UP, normal);
+        return obj;
+      }
+
+      function randomNormal(rand) {
+        return new THREE.Vector3(rand() - 0.5, rand() - 0.5, rand() - 0.5).normalize();
+      }
+
+      // Small bodies circling a planet (moons, satellites)
+      function addOrbiters(group, bodies, rand) {
+        return bodies.map((mesh, i) => {
+          const pivot = new THREE.Group();
+          pivot.rotation.x = (rand() - 0.5) * 0.9;
+          pivot.rotation.z = (rand() - 0.5) * 0.9;
+          const spinner = new THREE.Group();
+          spinner.rotation.y = (i / bodies.length) * Math.PI * 2;
+          mesh.position.x = mesh.userData.dist;
+          spinner.add(mesh);
+          pivot.add(spinner);
+          group.add(pivot);
+          return { spinner, speed: 0.25 + rand() * 0.35 };
+        });
+      }
+
+      // ---------- Background: stars + faint constellations ----------
+      (function starfield() {
+        const rand = seeded(7);
+        const n = 3500;
+        const pos = new Float32Array(n * 3);
+        const col = new Float32Array(n * 3);
+        for (let i = 0; i < n; i++) {
+          const v = randomNormal(rand).multiplyScalar(500 + rand() * 600);
+          pos.set([v.x, v.y, v.z], i * 3);
+          const tint = rand() < 0.2 ? [0.65, 0.85, 1] : rand() < 0.1 ? [1, 0.9, 0.7] : [1, 1, 1];
+          const b = 0.5 + rand() * 0.5;
+          col.set(tint.map((c) => c * b), i * 3);
+        }
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+        geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
+        scene.add(
+          new THREE.Points(
+            geo,
+            new THREE.PointsMaterial({
+              size: 3,
+              map: GLOW,
+              vertexColors: true,
+              transparent: true,
+              depthWrite: false,
+              blending: THREE.AdditiveBlending,
+            })
+          )
+        );
+
+        // Connect-the-dots constellations: most frame the overview shot (around
+        // the solar system, not directly behind it), the rest are scattered
+        // for the close-up shots
+        const viewDir = new THREE.Vector3(0, -0.62, -0.78);
+        for (let c = 0; c < 30; c++) {
+          const pts = [];
+          let dir = randomNormal(rand);
+          if (c < 18) {
+            do {
+              dir = viewDir.clone().add(randomNormal(rand).multiplyScalar(0.9)).normalize();
+            } while (dir.angleTo(viewDir) < 0.38 || dir.angleTo(viewDir) > 0.85);
+          }
+          const p = dir.multiplyScalar(430 + rand() * 80);
+          for (let i = 0; i < 5 + Math.floor(rand() * 3); i++) {
+            pts.push(p.clone());
+            p.add(randomNormal(rand).multiplyScalar(25 + rand() * 25));
+          }
+          scene.add(
+            new THREE.Line(
+              new THREE.BufferGeometry().setFromPoints(pts),
+              new THREE.LineBasicMaterial({ color: 0xbfd8ff, transparent: true, opacity: 0.2 + rand() * 0.15 })
+            )
+          );
+          pts.forEach((q, i) => {
+            const s = glow(i === 0 ? 0xcfe6ff : 0xffffff, i === 0 ? 9 : 5 + rand() * 2, 0.9);
+            s.position.copy(q);
+            scene.add(s);
+          });
+        }
+      })();
+
+      // ---------- Soft colored nebula clouds behind the system ----------
+      const CLOUD = canvasTexture(256, 256, (g) => {
+        const rand = seeded(91);
+        for (let i = 0; i < 14; i++) {
+          const x = 70 + rand() * 116, y = 70 + rand() * 116, r = 40 + rand() * 60;
+          const grd = g.createRadialGradient(x, y, 0, x, y, r);
+          grd.addColorStop(0, "rgba(255,255,255,0.35)");
+          grd.addColorStop(1, "rgba(255,255,255,0)");
+          g.fillStyle = grd;
+          g.fillRect(0, 0, 256, 256);
+        }
+      });
+      [
+        [0x4fd1c5, -260, -260, -330, 420],
+        [0xff9fd2, 300, -220, -300, 380],
+        [0x6ec8ff, 40, -330, -420, 520],
+        [0xffd66b, -380, -120, -180, 300],
+        [0xff8a6b, 360, -60, -120, 260],
+      ].forEach(([c, x, y, z, size]) => {
+        const s = new THREE.Sprite(
+          new THREE.SpriteMaterial({ map: CLOUD, color: c, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false })
+        );
+        s.position.set(x, y, z);
+        s.scale.setScalar(size);
+        scene.add(s);
+      });
+
+      // ---------- Asteroid belt between the Projects and Clubs orbits ----------
+      const belt = (() => {
+        const rand = seeded(57);
+        const n = 420;
+        const mesh = new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1, 0), toon(0xffffff), n);
+        const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), v = new THREE.Vector3(), sc = new THREE.Vector3();
+        const palette = [0x8a8f9c, 0xa89f91, 0x6f7380, 0xc2b8a3];
+        for (let i = 0; i < n; i++) {
+          const a = rand() * Math.PI * 2;
+          const rad = 31.4 + rand() * 2.8;
+          v.set(Math.cos(a) * rad, (rand() - 0.5) * 0.8, Math.sin(a) * rad);
+          q.setFromEuler(e.set(rand() * 3, rand() * 3, rand() * 3));
+          const size = 0.07 + Math.pow(rand(), 3) * 0.3;
+          sc.set(size, size * (0.6 + rand() * 0.6), size);
+          mesh.setMatrixAt(i, m.compose(v, q, sc));
+          mesh.setColorAt(i, new THREE.Color(palette[i % palette.length]));
+        }
+        scene.add(mesh);
+        return mesh;
+      })();
+
+      // ---------- Planet builders ----------
+      function buildSun(def) {
+        const body = new THREE.Group();
+        body.add(new THREE.Mesh(new THREE.SphereGeometry(def.radius, 64, 48), new THREE.MeshBasicMaterial({ color: 0xffd66b })));
+        body.add(glow(0xffc24a, def.radius * 5, 0.85));
+        body.add(glow(0xff9a3c, def.radius * 9, 0.35));
+        // two slowly spinning halo rings
+        const rings = [0, 1].map((i) => {
+          const ring = new THREE.Mesh(
+            new THREE.TorusGeometry(def.radius * (1.45 + i * 0.25), 0.06, 8, 96),
+            new THREE.MeshBasicMaterial({ color: 0xffe6a3, transparent: true, opacity: 0.6 })
+          );
+          ring.rotation.set(Math.PI / 2 + (i ? 0.5 : -0.4), i ? 0.3 : -0.2, 0);
+          body.add(ring);
+          return ring;
+        });
+        return {
+          body,
+          tick(t) {
+            rings[0].rotation.z = t * 0.3;
+            rings[1].rotation.z = -t * 0.2;
+          },
+        };
+      }
+
+      function buildRinged(def) {
+        const r = def.radius;
+        const bands = canvasTexture(32, 256, (g, w, h) => {
+          const colors = ["#f6c27a", "#e89a52", "#fbe2b4", "#d97c3c", "#f3b766"];
+          const rand = seeded(3);
+          for (let y = 0, i = 0; y < h; i++) {
+            const bh = 10 + rand() * 30;
+            g.fillStyle = colors[i % colors.length];
+            g.fillRect(0, y, w, bh);
+            y += bh;
+          }
+        });
+        const planet = new THREE.Mesh(new THREE.SphereGeometry(r, 48, 32), toon(0xffffff, { map: bands }));
+        const rings = new THREE.Group();
+        rings.rotation.set(Math.PI / 2 - 0.45, 0.2, 0);
+        [
+          [1.45, 1.9, 0xfbe2b4, 0.85],
+          [1.95, 2.35, 0xe89a52, 0.6],
+        ].forEach(([a, b, c, o]) => {
+          rings.add(
+            new THREE.Mesh(
+              new THREE.RingGeometry(r * a, r * b, 96),
+              toon(c, { side: THREE.DoubleSide, transparent: true, opacity: o })
+            )
+          );
+        });
+        const body = new THREE.Group();
+        body.add(planet, rings);
+        return { body, spin: planet };
+      }
+
+      function buildGrass(def) {
+        const r = def.radius;
+        const rand = seeded(11);
+        const planet = new THREE.Group();
+        planet.add(new THREE.Mesh(new THREE.SphereGeometry(r, 48, 32), toon(0x6fd65f)));
+        // little trees and flowers stuck to the surface
+        for (let i = 0; i < 14; i++) {
+          const tree = new THREE.Group();
+          const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.12, 0.45, 6), toon(0x8b5a2b));
+          trunk.position.y = 0.2;
+          const top = new THREE.Mesh(new THREE.ConeGeometry(0.38, 0.9, 7), toon(rand() < 0.5 ? 0x2f9e44 : 0x3cb371));
+          top.position.y = 0.8;
+          tree.add(trunk, top);
+          tree.scale.setScalar(0.7 + rand() * 0.6);
+          planet.add(placeOnSurface(tree, r * 0.97, randomNormal(rand)));
+        }
+        for (let i = 0; i < 18; i++) {
+          const flower = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 6), toon([0xffffff, 0xffe066, 0xff8fab][i % 3]));
+          planet.add(placeOnSurface(flower, r, randomNormal(rand)));
+        }
+        const body = new THREE.Group();
+        body.add(planet);
+        // three moons, one per project
+        const moons = [0xd9d4c7, 0xffd66b, 0x9fd8ff].map((c) => {
+          const m = new THREE.Mesh(new THREE.SphereGeometry(0.42 + rand() * 0.18, 20, 14), toon(c));
+          m.userData.dist = r * (1.7 + rand() * 0.6);
+          return m;
+        });
+        const orbiters = addOrbiters(body, moons, rand);
+        return {
+          body,
+          spin: planet,
+          tick(t, dt) {
+            orbiters.forEach((o) => (o.spinner.rotation.y += dt * o.speed));
+          },
+        };
+      }
+
+      function buildCrystal(def) {
+        const r = def.radius;
+        const rand = seeded(23);
+        const planet = new THREE.Group();
+        const rock = new THREE.IcosahedronGeometry(r, 1);
+        rock.computeVertexNormals(); // non-indexed, so this gives flat facets
+        planet.add(new THREE.Mesh(rock, toon(0xffc2e2)));
+        for (let i = 0; i < 12; i++) {
+          const geo = new THREE.OctahedronGeometry(0.35, 0);
+          geo.translate(0, 0.3, 0);
+          const crystal = new THREE.Mesh(
+            geo,
+            toon(rand() < 0.5 ? 0xffe6f3 : 0xff8fc8, { emissive: 0x4a1a33 })
+          );
+          crystal.scale.set(1, 2.2 + rand() * 1.5, 1);
+          planet.add(placeOnSurface(crystal, r * 0.9, randomNormal(rand)));
+        }
+        const body = new THREE.Group();
+        body.add(planet);
+        // two satellites, one per club
+        const sats = [0xffd66b, 0xffffff].map((c) => {
+          const m = new THREE.Mesh(new THREE.DodecahedronGeometry(0.32, 0), toon(c));
+          m.userData.dist = r * (1.6 + rand() * 0.7);
+          return m;
+        });
+        const orbiters = addOrbiters(body, sats, rand);
+        return {
+          body,
+          spin: planet,
+          tick(t, dt) {
+            orbiters.forEach((o) => (o.spinner.rotation.y += dt * o.speed));
+          },
+        };
+      }
+
+      function buildScholar(def) {
+        const r = def.radius;
+        const rand = seeded(31);
+        const planet = new THREE.Group();
+        planet.add(new THREE.Mesh(new THREE.SphereGeometry(r, 48, 32), toon(0xf0d79a)));
+        // dark band around the middle
+        const band = new THREE.Mesh(new THREE.TorusGeometry(r * 1.0, r * 0.12, 12, 64), toon(0x1f1f26));
+        band.rotation.x = Math.PI / 2;
+        planet.add(band);
+        // graduation cap perched on top
+        const cap = new THREE.Group();
+        const base = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.45, r * 0.5, r * 0.35, 24), toon(0x1f1f26));
+        base.position.y = r * 0.95;
+        const board = new THREE.Mesh(new THREE.BoxGeometry(r * 1.35, r * 0.08, r * 1.35), toon(0x1f1f26));
+        board.position.y = r * 1.15;
+        board.rotation.y = Math.PI / 4;
+        const button = new THREE.Mesh(new THREE.SphereGeometry(r * 0.07, 10, 8), toon(0xffd66b));
+        button.position.y = r * 1.2;
+        const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, r * 0.6, 6), toon(0xffd66b));
+        cord.position.set(r * 0.68, r * 0.9, 0);
+        const tassel = new THREE.Mesh(new THREE.ConeGeometry(r * 0.08, r * 0.22, 8), toon(0xffd66b));
+        tassel.position.set(r * 0.68, r * 0.55, 0);
+        cap.add(base, board, button, cord, tassel);
+        cap.rotation.z = -0.18;
+        planet.add(cap);
+        const body = new THREE.Group();
+        body.add(planet);
+        // a few books drifting around it
+        const books = [0xe45858, 0x4f8fe0, 0xf2f2f2].map((c) => {
+          const m = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.14, 0.38), toon(c));
+          m.rotation.set(rand(), rand(), rand());
+          m.userData.dist = r * (1.7 + rand() * 0.5);
+          return m;
+        });
+        const orbiters = addOrbiters(body, books, rand);
+        return {
+          body,
+          spin: planet,
+          tick(t, dt) {
+            orbiters.forEach((o) => (o.spinner.rotation.y += dt * o.speed));
+          },
+        };
+      }
+
+      function buildWork(def) {
+        const r = def.radius;
+        const rand = seeded(41);
+        const planet = new THREE.Group();
+        planet.add(new THREE.Mesh(new THREE.SphereGeometry(r, 48, 32), toon(0x4fd1c5)));
+        // little brick and cream buildings
+        for (let i = 0; i < 11; i++) {
+          const h = 0.3 + rand() * 0.6;
+          const geo = new THREE.BoxGeometry(0.35 + rand() * 0.25, h, 0.35 + rand() * 0.25);
+          geo.translate(0, h / 2, 0);
+          const bldg = new THREE.Mesh(geo, toon(rand() < 0.6 ? 0xb5523b : 0xf3e6c8));
+          planet.add(placeOnSurface(bldg, r * 0.98, randomNormal(rand)));
+        }
+        // a water tower on top
+        const tower = new THREE.Group();
+        for (let i = 0; i < 4; i++) {
+          const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.7, 5), toon(0xdfe6f2));
+          const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
+          leg.position.set(Math.cos(a) * 0.18, 0.35, Math.sin(a) * 0.18);
+          tower.add(leg);
+        }
+        const tank = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.4, 16), toon(0xdfe6f2));
+        tank.position.y = 0.85;
+        const roof = new THREE.Mesh(new THREE.ConeGeometry(0.34, 0.25, 16), toon(0xcfb991));
+        roof.position.y = 1.17;
+        tower.add(tank, roof);
+        planet.add(placeOnSurface(tower, r * 0.97, new THREE.Vector3(0.15, 1, 0.1).normalize()));
+        const body = new THREE.Group();
+        body.add(planet);
+        return { body, spin: planet };
+      }
+
+      function buildBeacon(def) {
+        const r = def.radius;
+        const spots = canvasTexture(512, 256, (g, w, h) => {
+          g.fillStyle = "#ff7a59";
+          g.fillRect(0, 0, w, h);
+          const rand = seeded(5);
+          g.fillStyle = "#fff4e6";
+          for (let i = 0; i < 16; i++) {
+            g.beginPath();
+            g.arc(rand() * w, 30 + rand() * (h - 60), 14 + rand() * 22, 0, Math.PI * 2);
+            g.fill();
+          }
+        });
+        const body = new THREE.Group();
+        body.add(new THREE.Mesh(new THREE.SphereGeometry(r, 48, 32), toon(0xffffff, { map: spots })));
+        // antenna with a blinking light on top
+        const antenna = new THREE.Group();
+        const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, r * 1.1, 8), toon(0xdfe6f2));
+        pole.position.y = r * 1.5;
+        const dish = new THREE.Mesh(
+          new THREE.SphereGeometry(0.35, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2),
+          toon(0xdfe6f2, { side: THREE.DoubleSide })
+        );
+        dish.position.y = r + 0.1;
+        dish.rotation.x = Math.PI;
+        const tip = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 8), new THREE.MeshBasicMaterial({ color: 0xffe066 }));
+        tip.position.y = r * 2.1;
+        const tipGlow = glow(0xffe066, 2.2, 0.8);
+        tipGlow.position.copy(tip.position);
+        antenna.add(pole, dish, tip, tipGlow);
+        antenna.rotation.z = 0.35;
+        body.add(antenna);
+        return {
+          body,
+          tick(t) {
+            tipGlow.material.opacity = 0.35 + 0.55 * (0.5 + 0.5 * Math.sin(t * 3));
+            body.rotation.y = t * 0.15;
+          },
+        };
+      }
+
+      // ---------- Planet definitions ----------
+      // Speeds and starting angles were picked by simulating the overview camera
+      // so planets rarely pass in front of each other or the sun.
+      const DEFS = [
+        { id: "about", name: "About Me", color: "#ffd66b", radius: 4.5, orbit: 0, speed: 0, angle: 0, build: buildSun },
+        { id: "education", name: "Education", color: "#cfb991", radius: 2.1, orbit: 14, speed: 0.141, angle: 5.84, build: buildScholar },
+        { id: "internships", name: "Internships", color: "#ffb35c", radius: 2.1, orbit: 21.5, speed: 0.119, angle: 1.8, build: buildRinged },
+        { id: "projects", name: "Projects", color: "#79e06f", radius: 2.4, orbit: 29, speed: 0.093, angle: 1.11, build: buildGrass },
+        { id: "clubs", name: "Clubs", color: "#ff9fd2", radius: 2.2, orbit: 36.5, speed: 0.08, angle: 5.29, build: buildCrystal },
+        { id: "work", name: "Work Experience", color: "#4fd1c5", radius: 2.1, orbit: 44, speed: 0.058, angle: 2.35, build: buildWork },
+        { id: "contact", name: "Contact", color: "#ff8a6b", radius: 1.9, orbit: 51.5, speed: 0.039, angle: 3.62, build: buildBeacon },
+      ];
+
+      const labelsEl = document.getElementById("labels");
+      const planets = DEFS.map((def, i) => {
+        const group = new THREE.Group();
+        const built = def.build(def);
+        group.add(built.body);
+        if (def.orbit) group.add(glow(def.color, def.radius * 4.2, 0.28));
+        // larger invisible sphere so planets are easy to click
+        const hit = new THREE.Mesh(
+          new THREE.SphereGeometry(def.radius * 1.7, 12, 8),
+          new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })
+        );
+        group.add(hit);
+        scene.add(group);
+
+        if (def.orbit) {
+          const ring = new THREE.Mesh(
+            new THREE.RingGeometry(def.orbit - 0.04, def.orbit + 0.04, 160),
+            new THREE.MeshBasicMaterial({ color: 0x9fb8e6, transparent: true, opacity: 0.18, side: THREE.DoubleSide })
+          );
+          ring.rotation.x = -Math.PI / 2;
+          scene.add(ring);
+        }
+
+        const label = document.createElement("button");
+        label.className = "planet-label";
+        label.style.setProperty("--c", def.color);
+        label.textContent = def.name;
+        label.addEventListener("click", () => open(def.id));
+        labelsEl.appendChild(label);
+
+        const p = { def, group, label, built, scale: 1, index: i };
+        hit.userData.planet = p;
+        p.hit = hit;
+        return p;
+      });
+      const byId = Object.fromEntries(planets.map((p) => [p.def.id, p]));
+
+      // ---------- Camera choreography ----------
+      const isNarrow = () => innerWidth < 760;
+      const pointer = new THREE.Vector2(9, 9);
+      const curTarget = new THREE.Vector3();
+      let mode = "overview";
+      let launched = false; // set once the rocket loader hands off
+      let active = null;
+      let hovered = null;
+      const tween = { t: 1, dur: 1.6, fromPos: new THREE.Vector3(), fromTarget: new THREE.Vector3() };
+
+      // User zoom (1 = default overview, smaller = closer) and pan offset on the orbit plane
+      const view = { zoom: 1, pan: new THREE.Vector3() };
+      const ZOOM_MIN = 0.3;
+      const ZOOM_MAX = 1.15;
+      const isZoomedIn = () => view.zoom < 0.95;
+
+      function overviewPose(time) {
+        const a = camera.aspect;
+        const ZOOM = 1.75; // higher = farther out
+        // narrow screens back the camera off so the outer orbit still fits across
+        const k = Math.max(1, 1.25 / a) * ZOOM;
+        // no sway or mouse parallax while exploring zoomed in, so dragging feels solid
+        const still = reduceMotion || isNarrow() || isZoomedIn();
+        const sway = still ? 0 : Math.sin(time * 0.12) * 6;
+        const px = still || Math.abs(pointer.x) > 1 ? 0 : pointer.x * 3;
+        const py = still || Math.abs(pointer.y) > 1 ? 0 : pointer.y * 2;
+        const base = new THREE.Vector3(0, isNarrow() ? -4 : -8, 0); // lower target lifts the system above the dock
+        const offset = new THREE.Vector3((sway + px) * k, (41.6 + py) * k, 57.6 * k).sub(base);
+        const target = base.add(view.pan);
+        return { pos: target.clone().addScaledVector(offset, view.zoom), target };
+      }
+
+      function focusPose(p) {
+        const P = p.group.position.clone();
+        const r = p.def.radius;
+        // approach from outside the orbit, angled so the sun sits off to one side
+        const dir = P.lengthSq() < 0.01
+          ? new THREE.Vector3(0, 0, 1)
+          : P.clone().setY(0).normalize().applyAxisAngle(UP, 0.55);
+        const dist = r * (isNarrow() ? 11 : 7.5);
+        const pos = P.clone().addScaledVector(dir, dist).add(new THREE.Vector3(0, r * 1.5, 0));
+        // shift the look target so the planet sits beside the panel
+        const fwd = P.clone().sub(pos).normalize();
+        const right = new THREE.Vector3().crossVectors(fwd, UP).normalize();
+        const target = isNarrow()
+          ? P.clone().add(new THREE.Vector3(0, -r * 2.6, 0))
+          : P.clone().addScaledVector(right, r * 1.35);
+        return { pos, target };
+      }
+
+      function startTween(dur) {
+        tween.t = 0;
+        tween.dur = reduceMotion ? 0.001 : dur;
+        tween.fromPos.copy(camera.position);
+        tween.fromTarget.copy(curTarget);
+      }
+
+      const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+      // ---------- Panel ----------
+      const panel = document.getElementById("panel");
+      const panelTitle = document.getElementById("panel-title");
+      const panelEyebrow = document.getElementById("panel-eyebrow");
+      const sections = document.querySelectorAll(".pc");
+      const dockBtns = document.querySelectorAll(".dock button");
+
+      function open(id) {
+        const p = byId[id];
+        if (!p || active === p) return;
+        startTween(active ? 1.3 : 1.6);
+        active = p;
+        mode = "focus";
+
+        sections.forEach((s) => (s.hidden = s.id !== "pc-" + id));
+        const sec = document.getElementById("pc-" + id);
+        panelTitle.innerHTML = sec.dataset.title;
+        panelEyebrow.textContent = sec.dataset.eyebrow;
+        panel.style.setProperty("--accent", p.def.color);
+        panel.querySelector(".panel-body").scrollTop = 0;
+        panel.classList.add("open");
+        panel.setAttribute("aria-hidden", "false");
+        document.body.classList.add("focused");
+        dockBtns.forEach((b) => b.classList.toggle("active", b.dataset.id === id));
+        history.replaceState(null, "", "#" + id);
+      }
+
+      function close() {
+        if (mode === "overview") return;
+        mode = "overview";
+        active = null;
+        startTween(1.6);
+        panel.classList.remove("open");
+        panel.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("focused");
+        dockBtns.forEach((b) => b.classList.remove("active"));
+        history.replaceState(null, "", location.pathname);
+      }
+
+      panel.querySelector(".close").addEventListener("click", close);
+      document.querySelectorAll("[data-goto]").forEach((b) =>
+        b.addEventListener("click", () => open(b.dataset.goto))
+      );
+      dockBtns.forEach((b) => b.addEventListener("click", () => open(b.dataset.id)));
+      addEventListener("keydown", (e) => e.key === "Escape" && close());
+
+      // ---------- Picking ----------
+      const raycaster = new THREE.Raycaster();
+      const hits = planets.map((p) => p.hit);
+
+      function pick() {
+        if (Math.abs(pointer.x) > 1) return null;
+        raycaster.setFromCamera(pointer, camera);
+        const hit = raycaster.intersectObjects(hits, false)[0];
+        return hit ? hit.object.userData.planet : null;
+      }
+
+      const ndcOf = (x, y) => new THREE.Vector2((x / innerWidth) * 2 - 1, -(y / innerHeight) * 2 + 1);
+      const setPointer = (e) => pointer.copy(ndcOf(e.clientX, e.clientY));
+
+      // ---------- Zoom and drag-to-pan ----------
+      const probe = new THREE.PerspectiveCamera();
+      const ground = new THREE.Plane(UP, 0);
+      const hintEl = document.getElementById("hint");
+      const zoomUI = document.querySelector(".zoom-controls");
+
+      // where a screen point lands on the orbit plane for a given camera pose
+      function groundPoint(ndc, pose) {
+        probe.copy(camera);
+        probe.position.copy(pose.pos);
+        probe.lookAt(pose.target);
+        probe.updateMatrixWorld();
+        raycaster.setFromCamera(ndc, probe);
+        return raycaster.ray.intersectPlane(ground, new THREE.Vector3());
+      }
+
+      function clampPan() {
+        if (view.pan.length() > 50) view.pan.setLength(50);
+        view.pan.y = 0;
+      }
+
+      function updateZoomUI() {
+        zoomUI.classList.toggle("zoomed", view.zoom !== 1 || view.pan.lengthSq() > 0.01);
+        hintEl.textContent = isZoomedIn() ? "Drag to look around" : "Select a planet to explore";
+      }
+
+      // zoom keeping the point under the cursor (or screen center) fixed
+      function zoomTo(z, ndc = new THREE.Vector2(0, 0)) {
+        if (mode !== "overview" || !launched) return;
+        z = THREE.MathUtils.clamp(z, ZOOM_MIN, ZOOM_MAX);
+        const t = clock.elapsedTime;
+        const before = groundPoint(ndc, overviewPose(t));
+        view.zoom = z;
+        const after = groundPoint(ndc, overviewPose(t));
+        if (before && after) view.pan.add(before.sub(after));
+        clampPan();
+        updateZoomUI();
+      }
+
+      function resetView() {
+        view.zoom = 1;
+        view.pan.set(0, 0, 0);
+        updateZoomUI();
+      }
+
+      zoomUI.addEventListener("click", (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        if (b.dataset.zoom === "in") zoomTo(view.zoom / 1.4);
+        if (b.dataset.zoom === "out") zoomTo(view.zoom * 1.4);
+        if (b.dataset.zoom === "reset") resetView();
+      });
+
+      canvas.addEventListener(
+        "wheel",
+        (e) => {
+          e.preventDefault();
+          zoomTo(view.zoom * Math.exp(e.deltaY * 0.0015), ndcOf(e.clientX, e.clientY));
+        },
+        { passive: false }
+      );
+
+      addEventListener("keydown", (e) => {
+        if (e.target.closest("input, textarea")) return;
+        if (e.key === "+" || e.key === "=") zoomTo(view.zoom / 1.4);
+        if (e.key === "-" || e.key === "_") zoomTo(view.zoom * 1.4);
+        if (e.key === "0") resetView();
+      });
+
+      // pointers: one pointer drags (when zoomed in), two pointers pinch-zoom
+      const pointersDown = new Map();
+      let drag = null;
+      let pinch = null;
+      let suppressClick = false;
+
+      canvas.addEventListener("pointerdown", (e) => {
+        pointersDown.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        canvas.setPointerCapture(e.pointerId);
+        if (pointersDown.size === 2) {
+          const [a, b] = [...pointersDown.values()];
+          pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), zoom: view.zoom };
+          drag = null;
+          return;
+        }
+        drag = { x: e.clientX, y: e.clientY, moved: false, grab: null };
+        if (mode === "overview" && isZoomedIn()) {
+          drag.grab = groundPoint(ndcOf(e.clientX, e.clientY), overviewPose(clock.elapsedTime));
+        }
+      });
+
+      canvas.addEventListener("pointermove", (e) => {
+        setPointer(e);
+        if (!pointersDown.has(e.pointerId)) return;
+        pointersDown.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+        if (pinch && pointersDown.size === 2) {
+          const [a, b] = [...pointersDown.values()];
+          const d = Math.hypot(a.x - b.x, a.y - b.y);
+          zoomTo((pinch.zoom * pinch.d) / Math.max(d, 1), ndcOf((a.x + b.x) / 2, (a.y + b.y) / 2));
+          suppressClick = true;
+          return;
+        }
+        if (!drag) return;
+        if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 5) drag.moved = true;
+        if (drag.moved && drag.grab) {
+          // move the camera so the grabbed spot stays under the cursor
+          const now = groundPoint(ndcOf(e.clientX, e.clientY), overviewPose(clock.elapsedTime));
+          if (now) {
+            view.pan.add(drag.grab.clone().sub(now));
+            clampPan();
+            updateZoomUI();
+          }
+        }
+      });
+
+      function endPointer(e) {
+        pointersDown.delete(e.pointerId);
+        if (drag && drag.moved) suppressClick = true;
+        if (pointersDown.size < 2) pinch = null;
+        if (pointersDown.size === 0) drag = null;
+      }
+      canvas.addEventListener("pointerup", endPointer);
+      canvas.addEventListener("pointercancel", endPointer);
+      canvas.addEventListener("pointerleave", () => pointer.set(9, 9));
+
+      canvas.addEventListener("click", (e) => {
+        if (suppressClick) {
+          suppressClick = false;
+          return;
+        }
+        setPointer(e);
+        const p = pick();
+        if (p) open(p.def.id);
+        else close();
+      });
+
+      // ---------- Resize ----------
+      function resize() {
+        camera.aspect = innerWidth / innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(innerWidth, innerHeight);
+      }
+      addEventListener("resize", resize);
+      resize();
+
+      // ---------- Main loop ----------
+      const clock = new THREE.Clock();
+      let orbitTime = 0;
+      let orbitRate = 1;
+      const tmp = new THREE.Vector3();
+
+      // The rocket loader calls this once it has launched
+      window.__flyIn = () => {
+        launched = true;
+        const startId = location.hash.slice(1); // deep link, e.g. index.html#projects
+        if (byId[startId]) open(startId);
+        else startTween(2.6); // fly in from deep space
+      };
+
+      function frame() {
+        const dt = Math.min(clock.getDelta(), 0.05);
+        const time = clock.elapsedTime;
+
+        // orbits ease to a stop while a planet is focused
+        orbitRate += ((mode === "overview" && !reduceMotion ? 1 : 0) - orbitRate) * Math.min(1, dt * 2);
+        orbitTime += dt * orbitRate;
+
+        belt.rotation.y = -orbitTime * 0.03;
+
+        hovered = mode === "overview" ? pick() : null;
+        canvas.style.cursor = hovered
+          ? "pointer"
+          : mode === "focus"
+          ? "zoom-out"
+          : isZoomedIn()
+          ? drag && drag.moved ? "grabbing" : "grab"
+          : "default";
+
+        planets.forEach((p) => {
+          const { def, group, built } = p;
+          if (def.orbit) {
+            const a = def.angle + orbitTime * def.speed;
+            group.position.set(
+              Math.cos(a) * def.orbit,
+              reduceMotion ? 0 : Math.sin(time * 0.8 + p.index) * 0.4,
+              Math.sin(a) * def.orbit
+            );
+          }
+          if (!reduceMotion) {
+            if (built.spin) built.spin.rotation.y += dt * 0.25;
+            if (built.tick) built.tick(time, dt);
+          }
+
+          const want = hovered === p ? 1.15 : 1;
+          p.scale += (want - p.scale) * Math.min(1, dt * 8);
+          group.scale.setScalar(p.scale);
+
+          // screen position of the planet and of its label just underneath
+          tmp.copy(group.position).project(camera);
+          p.sx = ((tmp.x + 1) / 2) * innerWidth;
+          p.sy = ((1 - tmp.y) / 2) * innerHeight;
+          p.depth = tmp.z;
+          const dist = camera.position.distanceTo(group.position);
+          p.sr = ((def.radius * p.scale) / (dist * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)))) * (innerHeight / 2);
+          tmp.copy(group.position);
+          tmp.y -= def.radius * 1.5;
+          tmp.project(camera);
+          p.lx = ((tmp.x + 1) / 2) * innerWidth;
+          p.ly = ((1 - tmp.y) / 2) * innerHeight;
+          p.label.style.transform = `translate(-50%, 0) translate(${p.lx}px, ${p.ly}px)`;
+          p.label.classList.toggle("hover", hovered === p);
+        });
+
+        // Hide any label that would collide with a nearer planet or label
+        // (hovered planet first, then front to back)
+        const placed = [];
+        [...planets]
+          .sort((a, b) => (b === hovered) - (a === hovered) || a.depth - b.depth)
+          .forEach((p) => {
+            p.lw ??= p.label.offsetWidth;
+            p.lh ??= p.label.offsetHeight;
+            const box = { x0: p.lx - p.lw / 2 - 4, x1: p.lx + p.lw / 2 + 4, y0: p.ly - 4, y1: p.ly + p.lh + 4 };
+            const hitsBox = placed.some((b) => box.x0 < b.x1 && b.x0 < box.x1 && box.y0 < b.y1 && b.y0 < box.y1);
+            const hitsPlanet = planets.some((q) => {
+              if (q === p || q.depth > p.depth) return false;
+              const cx = Math.max(box.x0, Math.min(q.sx, box.x1));
+              const cy = Math.max(box.y0, Math.min(q.sy, box.y1));
+              return Math.hypot(q.sx - cx, q.sy - cy) < q.sr;
+            });
+            const show = p.depth < 1 && (p === hovered || (!hitsBox && !hitsPlanet));
+            p.label.classList.toggle("hidden", !show);
+            if (show) placed.push(box);
+          });
+
+        const dest = mode === "overview" ? overviewPose(time) : focusPose(active);
+        if (!launched) {
+          // hold in deep space until the rocket loader hands off
+        } else if (tween.t < 1) {
+          tween.t = Math.min(1, tween.t + dt / tween.dur);
+          const e = ease(tween.t);
+          camera.position.lerpVectors(tween.fromPos, dest.pos, e);
+          curTarget.lerpVectors(tween.fromTarget, dest.target, e);
+        } else {
+          const k = 1 - Math.pow(drag && drag.moved ? 1e-6 : 0.02, dt);
+          camera.position.lerp(dest.pos, k);
+          curTarget.lerp(dest.target, k);
+        }
+        camera.lookAt(curTarget);
+
+        renderer.render(scene, camera);
+        requestAnimationFrame(frame);
+      }
+
+      dispatchEvent(new CustomEvent("load-step", { detail: "built" }));
+      renderer.compile(scene, camera); // compile shaders now so the first frames don't stall
+      window.__sceneReady = true;
+      document.body.classList.add("ready");
+      dispatchEvent(new Event("scene-ready"));
+      requestAnimationFrame(frame);
+
+      // ---------- Occasional shooting stars ----------
+      if (!reduceMotion) {
+        const sky = document.getElementById("shooting");
+        (function launchStar() {
+          if (mode === "overview" && !document.hidden) {
+            const el = document.createElement("span");
+            el.className = "shooting-star";
+            el.style.left = 10 + Math.random() * 70 + "vw";
+            el.style.top = Math.random() * 35 + "vh";
+            el.style.setProperty("--angle", 18 + Math.random() * 22 + "deg");
+            sky.appendChild(el);
+            setTimeout(() => el.remove(), 1600);
+          }
+          setTimeout(launchStar, 3500 + Math.random() * 5000);
+        })();
+      }
+    </script>
+
+    <!-- Rocket launch sequence: loading bar tracks real load steps, then liftoff -->
     <script>
       (function () {
-        const canvas = document.getElementById("sky");
-        const hero = canvas.parentElement;
-        let onScreen = true;
-        const ctx = canvas.getContext("2d");
-        const reduceMotion = window.matchMedia(
-          "(prefers-reduced-motion: reduce)"
-        ).matches;
+        const loader = document.getElementById("loader");
+        const fill = document.getElementById("progress-fill");
+        const bar = loader.querySelector(".progress");
+        const statusEl = document.getElementById("status");
+        const percentEl = document.getElementById("percent");
+        const quick = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-        const SPEED = 0.05; // max drift in px per frame
-        const LINK_DIST = 140; // max distance for a connecting line
-        const MOUSE_DIST = 180; // mouse "attracts" lines within this range
-        let w, h, dpr, stars, dust;
-        const mouse = { x: -9999, y: -9999 };
+        // Each real milestone raises the ceiling the bar may fill up to
+        const STEPS = {
+          start: [35, "Fueling up"],
+          fonts: [55, "Plotting a course"],
+          library: [80, "Mapping the stars"],
+          built: [95, "Building the galaxy"],
+          ready: [100, "Ready for launch"],
+        };
+        let ceiling = 0, shown = 0, launched = false, last = performance.now();
+        const reached = new Set();
 
-        function rand(min, max) {
-          return Math.random() * (max - min) + min;
+        function step(name) {
+          if (reached.has(name)) return;
+          reached.add(name);
+          ceiling = Math.max(ceiling, STEPS[name][0]);
         }
 
-        function init() {
-          dpr = Math.min(window.devicePixelRatio || 1, 2);
-          w = hero.offsetWidth;
-          h = hero.offsetHeight;
-          canvas.width = w * dpr;
-          canvas.height = h * dpr;
-          canvas.style.width = w + "px";
-          canvas.style.height = h + "px";
-          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-          // Scale star count with screen area
-          const count = Math.min(140, Math.floor((w * h) / 11000));
-          stars = Array.from({ length: count }, () => ({
-            x: rand(0, w),
-            y: rand(0, h),
-            vx: rand(-SPEED, SPEED),
-            vy: rand(-SPEED, SPEED),
-            r: rand(0.8, 2),
-            phase: rand(0, Math.PI * 2),
-          }));
-
-          // Faint, static background stars (never connected)
-          dust = Array.from({ length: count * 2 }, () => ({
-            x: rand(0, w),
-            y: rand(0, h),
-            r: rand(0.2, 0.7),
-            a: rand(0.15, 0.5),
-          }));
+        // ease the visible bar toward the current ceiling
+        function tick(now) {
+          const dt = Math.min(now - last, 100) / 1000;
+          last = now;
+          // eased, but never faster than ~45%/s so even a cached load reads as loading
+          shown += Math.min((ceiling - shown) * Math.min(1, dt * 3), 45 * dt);
+          if (ceiling - shown < 0.3) shown = ceiling;
+          fill.style.width = shown + "%";
+          percentEl.textContent = Math.round(shown) + "%";
+          // status text follows the bar: the last stage the bar has passed into
+          const stages = Object.values(STEPS);
+          const i = stages.findIndex(([pct]) => shown < pct);
+          statusEl.textContent = (i === -1 ? stages[stages.length - 1] : stages[i])[1];
+          bar.setAttribute("aria-valuenow", Math.round(shown));
+          if (shown >= 100) return setTimeout(liftoff, quick ? 0 : 350);
+          requestAnimationFrame(tick);
         }
 
-        function draw(t) {
-          ctx.clearRect(0, 0, w, h);
-
-          for (const d of dust) {
-            ctx.fillStyle = `rgba(255,255,255,${d.a})`;
-            ctx.beginPath();
-            ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-            ctx.fill();
-          }
-
-          // Lines between nearby stars
-          ctx.lineWidth = 0.6;
-          for (let i = 0; i < stars.length; i++) {
-            const a = stars[i];
-            for (let j = i + 1; j < stars.length; j++) {
-              const b = stars[j];
-              const dist = Math.hypot(a.x - b.x, a.y - b.y);
-              if (dist < LINK_DIST) {
-                ctx.strokeStyle = `rgba(255,255,255,${(1 - dist / LINK_DIST) * 0.35})`;
-                ctx.beginPath();
-                ctx.moveTo(a.x, a.y);
-                ctx.lineTo(b.x, b.y);
-                ctx.stroke();
-              }
-            }
-            // Lines to the cursor
-            const md = Math.hypot(a.x - mouse.x, a.y - mouse.y);
-            if (md < MOUSE_DIST) {
-              ctx.strokeStyle = `rgba(200,220,255,${(1 - md / MOUSE_DIST) * 0.6})`;
-              ctx.beginPath();
-              ctx.moveTo(a.x, a.y);
-              ctx.lineTo(mouse.x, mouse.y);
-              ctx.stroke();
-            }
-          }
-
-          // Stars with a gentle twinkle
-          for (const s of stars) {
-            const tw = reduceMotion ? 1 : 0.65 + 0.35 * Math.sin(t / 1600 + s.phase);
-            ctx.fillStyle = `rgba(255,255,255,${tw})`;
-            ctx.shadowColor = "rgba(255,255,255,0.8)";
-            ctx.shadowBlur = s.r * 4;
-            ctx.beginPath();
-            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-            ctx.fill();
-          }
-          ctx.shadowBlur = 0;
+        function liftoff() {
+          if (launched) return;
+          launched = true;
+          loader.classList.add("liftoff");
+          // start the camera fly-in as the rocket clears the screen
+          setTimeout(() => {
+            if (window.__flyIn) window.__flyIn();
+            loader.classList.add("done");
+            document.body.classList.remove("loading");
+          }, quick ? 0 : 1300);
+          setTimeout(() => loader.remove(), quick ? 600 : 2300);
         }
 
-        function step(t) {
-          for (const s of stars) {
-            s.x += s.vx;
-            s.y += s.vy;
-            if (s.x < -10) s.x = w + 10;
-            if (s.x > w + 10) s.x = -10;
-            if (s.y < -10) s.y = h + 10;
-            if (s.y > h + 10) s.y = -10;
-          }
-          if (onScreen) draw(t);
-          requestAnimationFrame(step);
-        }
+        step("start");
+        if (document.fonts) document.fonts.ready.then(() => step("fonts"));
+        addEventListener("load-step", (e) => step(e.detail));
+        if (window.__sceneReady) step("ready");
+        else addEventListener("scene-ready", () => step("ready"));
+        requestAnimationFrame(tick);
 
-        let resizeTimer;
-        window.addEventListener("resize", () => {
-          clearTimeout(resizeTimer);
-          resizeTimer = setTimeout(() => {
-            init();
-            if (reduceMotion) draw(0);
-          }, 150);
-        });
-        window.addEventListener("mousemove", (e) => {
-          const rect = canvas.getBoundingClientRect();
-          mouse.x = e.clientX - rect.left;
-          mouse.y = e.clientY - rect.top;
-        });
-
-        // Skip drawing while the hero is scrolled out of view
-        new IntersectionObserver(([entry]) => {
-          onScreen = entry.isIntersecting;
-        }).observe(hero);
-        window.addEventListener("mouseout", () => {
-          mouse.x = mouse.y = -9999;
-        });
-
-        init();
-        if (reduceMotion) draw(0);
-        else requestAnimationFrame(step);
+        // never trap anyone behind the loader if the 3D scene can't start
+        setTimeout(() => step("ready"), 8000);
       })();
     </script>
 
+    <!-- If WebGL or the 3D library can't load, show everything as a normal page -->
     <script>
-      // Involvement carousel: buttons scroll one card at a time
-      const track = document.querySelector(".carousel-track");
-      const prevBtn = document.querySelector(".carousel-btn.prev");
-      const nextBtn = document.querySelector(".carousel-btn.next");
-      const cardStep = () =>
-        track.firstElementChild.offsetWidth +
-        parseFloat(getComputedStyle(track).columnGap);
-      const updateButtons = () => {
-        prevBtn.disabled = track.scrollLeft <= 2;
-        nextBtn.disabled =
-          track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
-      };
-      prevBtn.addEventListener("click", () =>
-        track.scrollBy({ left: -cardStep(), behavior: "smooth" })
-      );
-      nextBtn.addEventListener("click", () =>
-        track.scrollBy({ left: cardStep(), behavior: "smooth" })
-      );
-      track.addEventListener("scroll", updateButtons);
-      window.addEventListener("resize", updateButtons);
-      updateButtons();
+      setTimeout(function () {
+        if (!window.__sceneReady) document.body.classList.add("no-webgl");
+      }, 4000);
+    </script>
 
-      // Mobile nav
-      const navToggle = document.querySelector(".nav-toggle");
-      const navLinks = document.querySelector(".nav-links");
-      navToggle.addEventListener("click", () => {
-        const open = navLinks.classList.toggle("open");
-        navToggle.setAttribute("aria-expanded", open);
-      });
-      navLinks.querySelectorAll("a").forEach((a) =>
-        a.addEventListener("click", () => navLinks.classList.remove("open"))
-      );
-
-      // Nav background once scrolled
-      const nav = document.querySelector(".nav");
-      const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 20);
-      window.addEventListener("scroll", onScroll);
-      onScroll();
-
-      // Reveal on scroll
-      const revealer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("visible");
-              revealer.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.1 }
-      );
-      document.querySelectorAll(".reveal").forEach((el) => revealer.observe(el));
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
     </script>
 
     <script>

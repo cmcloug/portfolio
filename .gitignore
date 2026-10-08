@@ -1,0 +1,7 @@
+# Full-size original photos (contain GPS metadata); only the cropped copies
+# in images/interests/ are committed
+images/athletics*.jpeg
+images/travel*.jpeg
+.DS_Store
+# Raw screenshot (shows browser tabs and camera); the cropped intervue-card.jpg is committed
+images/intervue.png
